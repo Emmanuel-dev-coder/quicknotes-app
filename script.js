@@ -4,13 +4,30 @@ let noteCategory = document.querySelector("#note-category");
 let notesList = document.querySelector("#notes-list");
 let errorMessage = document.querySelector("#error-message");
 let noteCount = document.querySelector("#note-count");
+let searchInput = document.querySelector("#search-input");
 
 let notes = [];
+
+function saveNotes() {
+    localStorage.setItem("notes", JSON.stringify(notes));
+}
 
 function render() {
     notesList.textContent = "";
 
-    for (let note of notes) {
+    let searchText = searchInput.value.toLowerCase();
+
+    let filteredNotes = notes.filter(function (note) {
+        return note.text.toLowerCase().includes(searchText);
+    });
+
+    if (filteredNotes.length === 0 && searchText !== "") {
+    let noResults = document.createElement("li");
+    noResults.textContent = "No notes match your search.";
+    notesList.appendChild(noResults);
+    }
+
+    for (let note of filteredNotes) { 
         let listItem = document.createElement("li");
 
         listItem.classList.add("category-" + note.category);
@@ -35,6 +52,8 @@ function render() {
             notes = notes.filter(function (item) {
                 return item.id !== note.id;
             });
+
+            saveNotes();
 
             render();
         });
@@ -78,7 +97,21 @@ form.addEventListener("submit", function (event) {
 
     notes.push(note);
 
+    saveNotes();
+
     render();
 
     noteInput.value = "";
+});
+
+let savedNotes = localStorage.getItem("notes");
+
+if (savedNotes !== null) {
+    notes = JSON.parse(savedNotes);
+}
+
+render();
+
+searchInput.addEventListener("input", function () {
+    render();
 });
