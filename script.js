@@ -13,6 +13,8 @@ function render() {
     for (let note of notes) {
         let listItem = document.createElement("li");
 
+        listItem.classList.add("category-" + note.category);
+
         let noteText = document.createElement("p");
         noteText.textContent = note.text;
 
@@ -41,14 +43,35 @@ function render() {
 
         notesList.appendChild(listItem);
     }
+    if (notes.length === 0) {
+        noteCount.textContent = "You have no notes yet.";
+    } else if (notes.length === 1) {
+        noteCount.textContent = "You have 1 note.";
+    } else {
+        noteCount.textContent = "You have " + notes.length + " notes.";
+    }
 }
 
 form.addEventListener("submit", function (event) {
     event.preventDefault();
 
+    let text = noteInput.value.trim();
+
+    if (text === "") {
+        errorMessage.textContent = "Please type a note first.";
+        return;
+    }
+
+    if (text.length > 200) {
+        errorMessage.textContent = "Notes must be 200 characters or fewer.";
+        return;
+    }
+
+    errorMessage.textContent = "";
+
     let note = {
         id: Date.now(),
-        text: noteInput.value,
+        text: text,
         category: noteCategory.value,
         createdAt: new Date().toLocaleString()
     };
