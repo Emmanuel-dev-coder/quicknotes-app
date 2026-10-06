@@ -5,6 +5,7 @@ let notesList = document.querySelector("#notes-list");
 let errorMessage = document.querySelector("#error-message");
 let noteCount = document.querySelector("#note-count");
 let searchInput = document.querySelector("#search-input");
+let clearAllButton = document.querySelector("#clear-all-button");
 
 let notes = [];
 
@@ -114,4 +115,14 @@ render();
 
 searchInput.addEventListener("input", function () {
     render();
+});
+
+clearAllButton.addEventListener("click", function () {
+    let answer = confirm("Delete all notes?");
+
+    if (answer === true) {
+        notes = [];
+        saveNotes();
+        render();
+    }
 });
